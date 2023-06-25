@@ -1,48 +1,45 @@
-import React, { useState, useEffect } from "react";
+import { useState ,useEffect } from "react";
+import { Link  ,  useNavigate} from "react-router-dom";
 import axios from "axios";
-import styled from "styled-components";
-import { useNavigate, Link } from "react-router-dom";
-import Logo from "../assets/logo.svg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { loginRoute } from "../utils/APIRoutes";
+import { loginRoute } from "../APIRoutes"
+import styled from "styled-components";
 
-export default function Login() {
-  const navigate = useNavigate();
-  const [values, setValues] = useState({ username: "", password: "" });
-  const toastOptions = {
+export default function Login () {
+const [username , setUsername] = useState('')
+const [password , setPassword] = useState('')
+const navigate = useNavigate()
+
+const toastOptions = {
     position: "bottom-right",
     autoClose: 8000,
     pauseOnHover: true,
     draggable: true,
     theme: "dark",
   };
-  useEffect(() => {
+
+ /* useEffect(() => {
     if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
       navigate("/");
     }
-  }, []);
+  }, []); */
 
-  const handleChange = (event) => {
-    setValues({ ...values, [event.target.name]: event.target.value });
-  };
-
-  const validateForm = () => {
-    const { username, password } = values;
+  const handleValidation= () => {
     if (username === "") {
-      toast.error("Email and Password is required.", toastOptions);
+      toast.error("Username and Password are required.", toastOptions);
       return false;
     } else if (password === "") {
-      toast.error("Email and Password is required.", toastOptions);
+      toast.error("Username and Password are required.", toastOptions);
       return false;
     }
     return true;
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (validateForm()) {
-      const { username, password } = values;
+const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (handleValidation()) {
+      try {
       const { data } = await axios.post(loginRoute, {
         username,
         password,
@@ -55,42 +52,31 @@ export default function Login() {
           process.env.REACT_APP_LOCALHOST_KEY,
           JSON.stringify(data.user)
         );
-
-        navigate("/");
+        navigate("/setavatar");
+      }}
+      catch(err){
+        console.log(err.msg)
       }
     }
-  };
+}
 
-  return (
-    <>
+    return (  
+      <>
       <FormContainer>
-        <form action="" onSubmit={(event) => handleSubmit(event)}>
-          <div className="brand">
-            <img src={Logo} alt="logo" />
-            <h1>chatapp</h1>
-          </div>
-          <input
-            type="text"
-            placeholder="Username"
-            name="username"
-            onChange={(e) => handleChange(e)}
-            min="3"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            name="password"
-            onChange={(e) => handleChange(e)}
-          />
-          <button type="submit">Log In</button>
-          <span>
-            Don't have an account ? <Link to="/register">Create One.</Link>
-          </span>
+        <form onSubmit={handleSubmit} >
+        <h2>ChatApp</h2>
+        <input type="text" placeholder="Username" required="true" 
+        value={username} onChange={(e)=> setUsername(e.target.value)} />
+         <input type="password" placeholder="Password" required="true" 
+        value={password} onChange={(e)=> setPassword(e.target.value)}
+        />
+        <button type="submit">Login</button>
+        <span> Don't have an account ? <Link to='/register'>Create Account</Link> </span>
         </form>
-      </FormContainer>
-      <ToastContainer />
-    </>
-  );
+        </FormContainer>
+        <ToastContainer/>
+        </>
+    );
 }
 
 const FormContainer = styled.div`
@@ -102,20 +88,11 @@ const FormContainer = styled.div`
   gap: 1rem;
   align-items: center;
   background-color: #131324;
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    justify-content: center;
-    img {
-      height: 5rem;
-    }
-    h1 {
+  h2 {
       color: white;
       text-transform: uppercase;
-    }
+      text-align: center
   }
-
   form {
     display: flex;
     flex-direction: column;
@@ -161,3 +138,4 @@ const FormContainer = styled.div`
     }
   }
 `;
+ 
