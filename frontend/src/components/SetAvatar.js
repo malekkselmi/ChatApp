@@ -2,17 +2,19 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { Buffer } from "buffer";
-import loader from "../assets/loader.gif";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import { setAvatarRoute } from "../utils/APIRoutes";
+import { setAvatarRoute } from "../APIRoutes";
+
 export default function SetAvatar() {
+
   const api =  `https://api.multiavatar.com/DuKNd7yZ5mThpj`;
   const navigate = useNavigate();
   const [avatars, setAvatars] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedAvatar, setSelectedAvatar] = useState(undefined);
+
   const toastOptions = {
     position: "bottom-right",
     autoClose: 8000,
@@ -21,9 +23,12 @@ export default function SetAvatar() {
     theme: "dark",
   };
 
-  useEffect(async () => {
+  useEffect(() => {
+    const setlocalstorage = async () => {
     if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY))
       navigate("/login");
+    }
+    setlocalstorage()
   }, []);
 
   const setProfilePicture = async () => {
@@ -52,28 +57,34 @@ export default function SetAvatar() {
     }
   };
 
-  useEffect(async () => {
+  useEffect( () => {
+    const fetchData = async () => {
     const data = [];
-    for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 4 ; i++) {
       const image = await axios.get(
         `${api}/${Math.round(Math.random() * 1000)}`
       );
       const buffer = new Buffer(image.data);
       data.push(buffer.toString("base64"));
-    }
+    } 
     setAvatars(data);
+    console.log(data)
     setIsLoading(false);
+    
+   }
+  fetchData()
   }, []);
+
   return (
     <>
       {isLoading ? (
         <Container>
-          <img src={loader} alt="loader" className="loader" />
+        <h1>loading...</h1>
         </Container>
       ) : (
         <Container>
           <div className="title-container">
-            <h1>Pick an Avatar as your profile picture</h1>
+            <h2> Select an Avatar </h2>
           </div>
           <div className="avatars">
             {avatars.map((avatar, index) => {
@@ -113,12 +124,13 @@ const Container = styled.div`
   height: 100vh;
   width: 100vw;
 
-  .loader {
-    max-inline-size: 100%;
-  }
-
+h1 {
+    color: white;
+    text-transform: uppercase;
+    text-align: center
+}
   .title-container {
-    h1 {
+    h2 {
       color: white;
     }
   }
