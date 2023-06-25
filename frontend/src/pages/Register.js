@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { useNavigate, Link } from "react-router-dom";
-import Logo from "../assets/logo.svg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { registerRoute } from "../utils/APIRoutes";
+import { registerRoute } from "../APIRoutes";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -23,14 +22,14 @@ export default function Register() {
     confirmPassword: "",
   });
 
-  useEffect(() => {
+ /* useEffect(() => {
     if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
       navigate("/");
     }
-  }, []);
+  }, []); */
 
-  const handleChange = (event) => {
-    setValues({ ...values, [event.target.name]: event.target.value });
+  const handleChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
   };
 
   const handleValidation = () => {
@@ -61,8 +60,8 @@ export default function Register() {
     return true;
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (handleValidation()) {
       const { email, username, password } = values;
       const { data } = await axios.post(registerRoute, {
@@ -79,7 +78,7 @@ export default function Register() {
           process.env.REACT_APP_LOCALHOST_KEY,
           JSON.stringify(data.user)
         );
-        navigate("/");
+        navigate("/setavatar");
       }
     }
   };
@@ -87,11 +86,8 @@ export default function Register() {
   return (
     <>
       <FormContainer>
-        <form action="" onSubmit={(event) => handleSubmit(event)}>
-          <div className="brand">
-            <img src={Logo} alt="logo" />
-            <h1>chatapp</h1>
-          </div>
+        <form action="" onSubmit={ handleSubmit}>
+         <h2>chatapp</h2>
           <input
             type="text"
             placeholder="Username"
@@ -118,7 +114,7 @@ export default function Register() {
           />
           <button type="submit">Create User</button>
           <span>
-            Already have an account ? <Link to="/login">Login.</Link>
+            Already have an account ? <Link to="/login">Login</Link>
           </span>
         </form>
       </FormContainer>
@@ -136,19 +132,12 @@ const FormContainer = styled.div`
   gap: 1rem;
   align-items: center;
   background-color: #131324;
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    justify-content: center;
-    img {
-      height: 5rem;
-    }
-    h1 {
+
+    h2 {
       color: white;
       text-transform: uppercase;
+      text-align: center
     }
-  }
 
   form {
     display: flex;
